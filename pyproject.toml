@@ -13,7 +13,7 @@ dependencies = [
   "anndata",
   "matplotlib",
   "seaborn",
-  "pandas>=1.1,<2.2",
+  "pandas>=1.3,<2.1",
   "numpy",
   "plotly",
   "leidenalg",
