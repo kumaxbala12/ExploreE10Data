@@ -4,6 +4,8 @@ import gdown
 import os
 import anndata as ad
 import matplotlib.pyplot as plt
+from anndata import read as read_h5ad
+
 
 st.set_page_config(layout="wide")
 st.title("E10 scRNA-seq Data Explorer")
