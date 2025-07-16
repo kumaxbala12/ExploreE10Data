@@ -1,16 +1,15 @@
-# 🧬 Single Cell Explorer (Google Drive version)
+# 🧬 Single Cell RNA-seq Explorer (Advanced)
 
-This version loads an `.h5ad` single-cell dataset directly from a public Google Drive link.
+This app loads a `.h5ad` single-cell RNA-seq dataset from Google Drive and offers:
+- UMAP Viewer
+- Gene Expression plots
+- Leiden clustering
+- Monocle-style pseudotime analysis (via Scanpy)
 
-## ✅ How to Use
-
-1. Run the app locally:
+## 🚀 Usage
 ```bash
 pip install -r requirements.txt
 streamlit run app.py
 ```
 
-2. Or deploy it to [Streamlit Cloud](https://streamlit.io/cloud)
-
-Dataset is fetched from:
-https://drive.google.com/file/d/1drzl3mGt_3nKnIDRqs8cRthV6HnoXuwY
+Deployed version: replace file ID in `app.py` if needed.

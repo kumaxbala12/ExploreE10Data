@@ -1,7 +1,6 @@
 streamlit
 scanpy
-anndata
-numpy
 pandas
 plotly
 requests
+matplotlib
