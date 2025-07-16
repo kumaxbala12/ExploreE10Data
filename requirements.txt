@@ -1,6 +1,0 @@
-streamlit
-scanpy
-pandas
-plotly
-requests
-matplotlib
