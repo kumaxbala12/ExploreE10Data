@@ -7,12 +7,12 @@ import numpy as np
 import requests
 import tempfile
 import matplotlib.pyplot as plt
+import gdown
 from io import BytesIO
 
 st.set_page_config(page_title="Single Cell Explorer", layout="wide")
 
 @st.cache_resource
-import gdown
 
 @st.cache_resource
 def load_from_google_drive():
