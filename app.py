@@ -12,13 +12,14 @@ from io import BytesIO
 st.set_page_config(page_title="Single Cell Explorer", layout="wide")
 
 @st.cache_resource
-def load_from_google_drive(file_id="1drzl3mGt_3nKnIDRqs8cRthV6HnoXuwY"):
-    url = f"https://drive.google.com/uc?id={file_id}"
-    r = requests.get(url)
-    temp = tempfile.NamedTemporaryFile(delete=False, suffix=".h5ad")
-    temp.write(r.content)
-    temp.flush()
-    return sc.read_h5ad(temp.name)
+import gdown
+
+@st.cache_resource
+def load_from_google_drive():
+    url = "https://drive.google.com/uc?id=1drzl3mGt_3nKnIDRqs8cRthV6HnoXuwY"
+    output = "/tmp/temp_data.h5ad"
+    gdown.download(url, output, quiet=False)
+    return sc.read_h5ad(output)
 
 if "adata" not in st.session_state:
     st.session_state.adata = load_from_google_drive()
