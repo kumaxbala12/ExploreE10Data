@@ -44,6 +44,7 @@ fig, ax = plt.subplots()
 sc.pl.umap(adata, color="seurat_clusters", ax=ax, show=False)
 st.pyplot(fig)
 
+
 st.write("Available groupings:", adata.obs.columns)
 
 
@@ -75,7 +76,7 @@ with col2:
     st.markdown("### Dot Plot")
     if gene:
         fig = sc.pl.dotplot(filtered, var_names=[gene], groupby=cluster_key, show=False)
-        st.pyplot(fig.figure)
+        st.pyplot(fig)
 
 # ---- Metadata Preview ----
 st.subheader("Metadata")
