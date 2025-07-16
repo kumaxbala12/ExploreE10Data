@@ -18,4 +18,5 @@ dependencies = [
     "louvain",
     "gdown",
     "python-igraph"
+    "pandas>=1.1,<2.2"
 ]
