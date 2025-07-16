@@ -1,57 +1,85 @@
 import streamlit as st
 import scanpy as sc
-import anndata
-import matplotlib.pyplot as plt
 import pandas as pd
+import matplotlib.pyplot as plt
+import gdown
+import os
 
-# Title
-st.title("🧬 Explore E10 scRNA-seq Data")
+# ---- CONFIG ----
+st.set_page_config(page_title="scRNA-seq Viewer", layout="wide")
+st.title("🔬 scRNA-seq Data Explorer")
 
-# Load data from Google Drive-mounted path
+# ---- DOWNLOAD FROM GOOGLE DRIVE ----
+DATA_URL = "https://drive.google.com/uc?id=1drzl3mGt_3nKnIDRqs8cRthV6HnoXuwY"
+LOCAL_H5AD = "data.h5ad"
+
+if not os.path.exists(LOCAL_H5AD):
+    with st.spinner("Downloading data from Google Drive..."):
+        gdown.download(DATA_URL, LOCAL_H5AD, quiet=False)
+
+# ---- LOAD DATA ----
 @st.cache_resource
 def load_data():
-    return sc.read_h5ad("/mount/src/exploree10data/seurat_object_rna.h5ad")
+    return sc.read_h5ad(LOCAL_H5AD)
 
 adata = load_data()
 
-# Show metadata options for filtering
-if 'seurat_clusters' in adata.obs.columns:
-    cluster_options = sorted(adata.obs['seurat_clusters'].unique())
-    selected_clusters = st.multiselect("Select clusters to include", cluster_options, default=cluster_options)
-    filtered_data = adata[adata.obs['seurat_clusters'].isin(selected_clusters)].copy()
-else:
-    st.warning("No 'seurat_clusters' found in metadata. Skipping cluster filtering.")
-    filtered_data = adata
+# ---- UMAP CHECK ----
+with st.spinner("Checking and computing UMAP if needed..."):
+    if "X_umap" not in adata.obsm:
+        st.warning("UMAP not found. Running preprocessing and UMAP...")
+        if "X_pca" not in adata.obsm:
+            sc.pp.normalize_total(adata)
+            sc.pp.log1p(adata)
+            sc.pp.highly_variable_genes(adata, n_top_genes=2000)
+            adata = adata[:, adata.var.highly_variable]
+            sc.pp.scale(adata, max_value=10)
+            sc.tl.pca(adata)
+        sc.pp.neighbors(adata)
+        sc.tl.umap(adata)
 
-# UMAP Plot
+# ---- UMAP PLOT ----
 st.subheader("UMAP")
-color_by = st.selectbox("Color UMAP by:", filtered_data.obs.columns)
-sc.pl.umap(filtered_data, color=color_by, show=False)
-fig = plt.gcf()
+color_by = st.selectbox("Color UMAP by:", list(adata.obs.columns), index=adata.obs.columns.get_loc("seurat_clusters") if "seurat_clusters" in adata.obs else 0)
+fig, ax = plt.subplots()
+sc.pl.umap(adata, color=color_by, ax=ax, show=False)
 st.pyplot(fig)
 plt.clf()
 
-# Violin Plot
-st.subheader("Violin Plot")
-gene = st.text_input("Enter gene name for violin plot:")
+# ---- CLUSTER FILTERING ----
+cluster_key = "seurat_clusters"
+if cluster_key in adata.obs.columns:
+    adata.obs[cluster_key] = adata.obs[cluster_key].astype(str)
+    clusters = sorted(adata.obs[cluster_key].unique())
+    selected = st.multiselect("Select clusters", clusters, default=clusters)
+    filtered = adata[adata.obs[cluster_key].isin(selected)]
+else:
+    st.warning(f"'{cluster_key}' not found in metadata. Showing full dataset.")
+    filtered = adata
+
+# ---- GENE EXPRESSION PLOTS ----
+st.subheader("Gene Expression")
+
+gene = st.text_input("Enter a gene name for plots (case-sensitive):")
+
+col1, col2 = st.columns(2)
 if gene:
     try:
-        sc.pl.violin(filtered_data, keys=gene, groupby='seurat_clusters', show=False)
-        fig = plt.gcf()
-        st.pyplot(fig)
-        plt.clf()
-    except KeyError:
-        st.error(f"Gene '{gene}' not found in dataset.")
+        with col1:
+            st.markdown("#### Violin Plot")
+            fig, ax = plt.subplots()
+            sc.pl.violin(filtered, keys=gene, groupby=cluster_key, ax=ax, show=False)
+            st.pyplot(fig)
+            plt.clf()
 
-# Dot Plot
-st.subheader("Dot Plot")
-genes = st.text_area("Enter gene names for dot plot (comma-separated):")
-if genes:
-    gene_list = [g.strip() for g in genes.split(",")]
-    try:
-        sc.pl.dotplot(filtered_data, var_names=gene_list, groupby='seurat_clusters', show=False)
-        fig = plt.gcf()
-        st.pyplot(fig)
-        plt.clf()
+        with col2:
+            st.markdown("#### Dot Plot")
+            fig = sc.pl.dotplot(filtered, var_names=[gene], groupby=cluster_key, show=False)
+            st.pyplot(fig)
+            plt.clf()
     except Exception as e:
-        st.error(f"Error in generating dot plot: {e}")
+        st.error(f"Could not plot for gene '{gene}'. Error: {e}")
+
+# ---- METADATA TABLE ----
+st.subheader("🔍 Metadata Preview")
+st.dataframe(adata.obs.head())
