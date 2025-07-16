@@ -26,6 +26,25 @@ def load_data():
 
 adata = load_data()
 
+with st.spinner("Checking and computing UMAP if needed..."):
+    if "X_umap" not in adata.obsm:
+        if "X_pca" not in adata.obsm:
+            # If PCA not done, do basic preprocessing
+            sc.pp.normalize_total(adata)
+            sc.pp.log1p(adata)
+            sc.pp.highly_variable_genes(adata, n_top_genes=2000)
+            adata = adata[:, adata.var.highly_variable]
+            sc.pp.scale(adata, max_value=10)
+            sc.tl.pca(adata)
+        sc.pp.neighbors(adata)
+        sc.tl.umap(adata)
+        
+st.subheader("UMAP Plot")
+fig, ax = plt.subplots()
+sc.pl.umap(adata, color="seurat_clusters", ax=ax, show=False)
+st.pyplot(fig)
+
+st.write("Available groupings:", adata.obs.columns)
 
 
 # ---- FILTERING ----
