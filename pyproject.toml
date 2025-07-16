@@ -1,17 +1,24 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+
 [project]
 name = "single-cell-explorer"
 version = "0.1.0"
+description = "Streamlit app to explore single-cell RNA-seq data"
+requires-python = ">=3.9"
+
 dependencies = [
-    "streamlit",
-    "scanpy",
-    "anndata",
-    "matplotlib",
-    "seaborn",
-    "pandas>=1.1,<2.2",
-    "numpy",
-    "plotly",
-    "leidenalg",
-    "louvain",
-    "gdown",
-    "python-igraph"
+  "streamlit",
+  "scanpy",
+  "anndata",
+  "matplotlib",
+  "seaborn",
+  "pandas>=1.1,<2.2",
+  "numpy",
+  "plotly",
+  "leidenalg",
+  "louvain",
+  "gdown",
+  "python-igraph"
 ]
+
