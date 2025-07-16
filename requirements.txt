@@ -4,6 +4,4 @@ anndata
 numpy
 pandas
 plotly
-seaborn
-altair
-Pillow
+requests
