@@ -26,14 +26,6 @@ def load_data():
 
 adata = load_data()
 
-st.subheader("UMAP Plot")
-
-if "X_umap" in filtered.obsm:
-    fig, ax = plt.subplots()
-    sc.pl.umap(filtered, color=cluster_key, ax=ax, show=False)
-    st.pyplot(fig)
-else:
-    st.warning("UMAP coordinates not found in the .h5ad file.")
 
 
 # ---- FILTERING ----
