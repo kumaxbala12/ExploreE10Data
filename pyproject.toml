@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+
+[project]
+dependencies = [
+  "streamlit",
+  "scanpy",
+  "anndata",
+  "matplotlib",
+  "seaborn",
+  "pandas",
+  "numpy",
+  "plotly",
+  "leidenalg",
+  "louvain",
+  "gdown",
+  "python-igraph"
+]
