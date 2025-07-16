@@ -1,18 +1,21 @@
+
 [build-system]
 requires = ["setuptools", "wheel"]
 
 [project]
+name = "single-cell-explorer"
+version = "0.1.0"
 dependencies = [
-  "streamlit",
-  "scanpy",
-  "anndata",
-  "matplotlib",
-  "seaborn",
-  "pandas",
-  "numpy",
-  "plotly",
-  "leidenalg",
-  "louvain",
-  "gdown",
-  "python-igraph"
+    "streamlit",
+    "scanpy",
+    "anndata",
+    "matplotlib",
+    "seaborn",
+    "pandas",
+    "numpy",
+    "plotly",
+    "leidenalg",
+    "louvain",
+    "gdown",
+    "python-igraph"
 ]
