@@ -1,7 +1,12 @@
 streamlit
 scanpy
+anndata
 pandas
-plotly
-requests
+numpy
 matplotlib
+seaborn
+plotly
 gdown
+python-igraph==0.10.8
+leidenalg
+louvain
